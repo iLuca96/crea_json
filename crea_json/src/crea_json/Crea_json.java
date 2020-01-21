@@ -93,11 +93,42 @@ public class Crea_json {
 							bwClasses_data.flush();
 							primaRigaMetodo=false;
 						}
-						////////
+						int k=0;
+						String nomeMetodo = "";						
+						while(rigaLetta.charAt(k)!='(') {
+							if(rigaLetta.charAt(k)!='+') {
+								nomeMetodo=nomeMetodo+rigaLetta.charAt(k);
+							}							
+							k++;							
+						}
+						bwClasses_data.write("\t\t\t\"name\": \""+nomeMetodo+"\",\n");
+						String ritornoMetodo = "";
+						while(rigaLetta.charAt(k)!='<') {
+							if((rigaLetta.charAt(k)=='(')&&(rigaLetta.charAt(k+1)==')')) {
+								k+=2;
+								while(rigaLetta.charAt(k)!='<') {
+									if((rigaLetta.charAt(k)!=' ')&&(rigaLetta.charAt(k)!=':')) {
+										ritornoMetodo=ritornoMetodo+rigaLetta.charAt(k);										
+									}
+									k++;
+								}								
+								bwClasses_data.write("\t\t\t\"type\": \""+ritornoMetodo+"\",\n");
+								bwClasses_data.write("\t\t\t\"visibility\": \"public\",\n");
+								break;
+							}							
+							k++;
+						}
+						
+						//bwClasses_data.write("\t\t\t\"parameters\": [\n");
+						//bwClasses_data.write("\t\t\t\t{\n");
+						
+						bwClasses_data.flush();			
 					
 					} else if((rigaLetta.contains("</text>")) && !(rigaLetta.contains("..") && !(rigaLetta.contains("1.*")))){
 						//nome classe
 						primoAttributo=true;
+						primaRigaMetodo=true;
+						
 						rigaModificata= rigaLetta.replace("</text>", "");
 						bwClasses.write("\t\""+rigaModificata+"\",\n");
 						
