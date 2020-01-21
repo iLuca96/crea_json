@@ -40,7 +40,6 @@ public class Crea_json {
 			String rigaLetta;
 			byte[] ib = new byte[] { (byte) 0x42, (byte) 0xE4, (byte) 0x72 };
 			String rigaModificata = new String(ib,"Windows-1252");
-			System.out.println("ciao"); 
 			int i=0, x=0;
 			while(in.hasNextLine()) {
 				rigaLetta=in.nextLine();
