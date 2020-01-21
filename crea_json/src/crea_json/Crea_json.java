@@ -35,14 +35,16 @@ public class Crea_json {
 			
 			Scanner in = new Scanner(reader);
 			
-			boolean primaRiga = false;
+			boolean primaRigaMetodo = false;
+			boolean primoAttributo = true;
+			String rigaLetta;		
 			
-			String rigaLetta;
 			byte[] ib = new byte[] { (byte) 0x42, (byte) 0xE4, (byte) 0x72 };
-			String rigaModificata = new String(ib,"Windows-1252");
+			String rigaModificata = new String(ib,"UTF-8");
 			int i=0, x=0;
 			while(in.hasNextLine()) {
-				rigaLetta=in.nextLine();
+				rigaLetta=in.nextLine();				
+								
 				if((rigaLetta.contains("</text>"))&&(rigaLetta.contains("-") &&  ((rigaLetta.contains(":") || (rigaLetta.contains(";")) )))) {
 					//attributo					
 					String nome = "", tipo = "";
@@ -60,55 +62,63 @@ public class Crea_json {
 						}							
 						k++;
 					}
-					if(rigaLetta.charAt(k)=='<') {
-						primaRiga = true;
-						System.out.println("culooooooooooo");
+					
+					if(primoAttributo){
+						bwClasses_data.write("\t\t{\n");
+					} else {
+						bwClasses_data.write(",\n\t\t{\n");
 					}
-					bwClasses_data.write("\t\t{\n");					
+									
 					bwClasses_data.write("\t\t\t\"name\": \""+nome+"\",\n");
 					bwClasses_data.write("\t\t\t\"type\": \""+tipo+"\",\n");
 					bwClasses_data.write("\t\t\t\"visibility\": \"private\",\n");
-					bwClasses_data.write("\t\t\t\"scope\": \"class\",\n");
-					bwClasses_data.write("\t\t},\n");
+					bwClasses_data.write("\t\t\t\"scope\": \"class\"\n");
 					
-					bwClasses_data.flush();
+					if(rigaLetta.charAt(k)=='<') {
+						primaRigaMetodo = true;
+					}					
+					
+					bwClasses_data.write("\t\t}");
+					bwClasses_data.flush();			
+					primoAttributo = false;
 					
 				} else if((rigaLetta.contains("</text>"))&&(rigaLetta.contains("+") && rigaLetta.contains("(") && rigaLetta.contains(")") &&  ((rigaLetta.contains(":") || (rigaLetta.contains(";") ))))){
 						//metodo
-						System.out.println(rigaLetta);
-						if(primaRiga) {
-							bwClasses_data.write("\t],\n");
+						primoAttributo=true;
+						if(primaRigaMetodo) {
+							
+							bwClasses_data.write("\n\t],\n");
 							bwClasses_data.write("\t\"methods\": [\n");
-							primaRiga=false;
-						}
-						
-						bwClasses_data.write("\t\t{\n");
-						//bwClasses_data.write("\t\t\t\"name\": \""+nomeMetodo+"\",\n");
-						
-						//bwClasses_data.flush();
-					
-						} else if((rigaLetta.contains("</text>")) && !(rigaLetta.contains("..") && !(rigaLetta.contains("1.*")))){
-							//nome classe
-							rigaModificata= rigaLetta.replace("</text>", "");
-							bwClasses.write("\t\""+rigaModificata+"\",\n");
-							
-							//creo nuovo file per ogni json
-							fileClasses_data = new File(pathJson+rigaModificata+".json");
-							fwClasses_data = new FileWriter(fileClasses_data);
-							bwClasses_data = new BufferedWriter(fwClasses_data);
-							//inserisco i primi dati nel json
-							bwClasses_data.write("{\n");
-							bwClasses_data.write("\t\"key\": \""+x+"\",\n");
-							bwClasses_data.write("\t\"name\": \""+rigaModificata+"\",\n");
-							bwClasses_data.write("\t\"description\": \"descrizione\",\n");
-							bwClasses_data.write("\t\"stereotype\": \"stereotipo\",\n");
-							bwClasses_data.write("\t\"subname\": \"sottonome\",\n");
-							bwClasses_data.write("\t\"isAbstract\": \"false\",\n");
-							bwClasses_data.write("\t\"properties\": [\n");
+							bwClasses_data.write("\t\t{\n");
 							bwClasses_data.flush();
-							
-							x++;
+							primaRigaMetodo=false;
 						}
+						////////
+					
+					} else if((rigaLetta.contains("</text>")) && !(rigaLetta.contains("..") && !(rigaLetta.contains("1.*")))){
+						//nome classe
+						primoAttributo=true;
+						rigaModificata= rigaLetta.replace("</text>", "");
+						bwClasses.write("\t\""+rigaModificata+"\",\n");
+						
+						//creo nuovo file per ogni json
+						fileClasses_data = new File(pathJson+rigaModificata+".json");
+						fwClasses_data = new FileWriter(fileClasses_data);
+						bwClasses_data = new BufferedWriter(fwClasses_data);
+						//inserisco i primi dati nel json
+						
+						bwClasses_data.write("{\n");
+						bwClasses_data.write("\t\"key\": \""+x+"\",\n");
+						bwClasses_data.write("\t\"name\": \""+rigaModificata+"\",\n");
+						bwClasses_data.write("\t\"description\": \"descrizione\",\n");
+						bwClasses_data.write("\t\"stereotype\": \"\",\n");
+						bwClasses_data.write("\t\"subname\": \"\",\n");
+						bwClasses_data.write("\t\"isAbstract\": \"false\",\n");
+						bwClasses_data.write("\t\"properties\": [\n");
+						bwClasses_data.flush();
+							
+						x++;
+					}
 				i++;
 			}
 			bwClasses.write("]");
