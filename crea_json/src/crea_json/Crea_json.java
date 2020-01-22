@@ -37,6 +37,8 @@ public class Crea_json {
 			
 			boolean primaRigaMetodo = false;
 			boolean primoAttributo = true;
+			
+			boolean ultimoMetodo = false;
 			String rigaLetta;		
 			
 			byte[] ib = new byte[] { (byte) 0x42, (byte) 0xE4, (byte) 0x72 };
@@ -85,13 +87,15 @@ public class Crea_json {
 				} else if((rigaLetta.contains("</text>"))&&(rigaLetta.contains("+") && rigaLetta.contains("(") && rigaLetta.contains(")") &&  ((rigaLetta.contains(":") || (rigaLetta.contains(";") ))))){
 						//metodo
 						primoAttributo=true;
-						if(primaRigaMetodo) {
-							
+						ultimoMetodo=true;
+						if(primaRigaMetodo) {							
 							bwClasses_data.write("\n\t],\n");
 							bwClasses_data.write("\t\"methods\": [\n");
-							bwClasses_data.write("\t\t{\n");
+							
 							bwClasses_data.flush();
 							primaRigaMetodo=false;
+						}else {
+							bwClasses_data.write(",\n");
 						}
 						int k=0;
 						String nomeMetodo = "";						
@@ -101,10 +105,12 @@ public class Crea_json {
 							}							
 							k++;							
 						}
+						bwClasses_data.write("\t\t{\n");
 						bwClasses_data.write("\t\t\t\"name\": \""+nomeMetodo+"\",\n");
 						String ritornoMetodo = "";
 						while(rigaLetta.charAt(k)!='<') {
 							if((rigaLetta.charAt(k)=='(')&&(rigaLetta.charAt(k+1)==')')) {
+								//get
 								k+=2;
 								while(rigaLetta.charAt(k)!='<') {
 									if((rigaLetta.charAt(k)!=' ')&&(rigaLetta.charAt(k)!=':')) {
@@ -113,11 +119,25 @@ public class Crea_json {
 									k++;
 								}								
 								bwClasses_data.write("\t\t\t\"type\": \""+ritornoMetodo+"\",\n");
-								bwClasses_data.write("\t\t\t\"visibility\": \"public\",\n");
+								bwClasses_data.write("\t\t\t\"visibility\": \"public\"\n");
+								
 								break;
-							}							
+							} else {
+								//set
+								bwClasses_data.write("\t\t\t\"parameters\": [\n\t\t\t\t{\n");
+								/*while(rigaLetta.charAt(k)!='<') {
+////////////////////////////////////////////////////////////////////////////////////////////////									
+								}*/
+								
+								
+								bwClasses_data.write("\t\t\t\t}\n");
+								bwClasses_data.write("\t\t\t]\n");
+								bwClasses_data.flush();
+							}
 							k++;
 						}
+						
+						bwClasses_data.write("\t\t}");
 						
 						//bwClasses_data.write("\t\t\t\"parameters\": [\n");
 						//bwClasses_data.write("\t\t\t\t{\n");
@@ -126,6 +146,14 @@ public class Crea_json {
 					
 					} else if((rigaLetta.contains("</text>")) && !(rigaLetta.contains("..") && !(rigaLetta.contains("1.*")))){
 						//nome classe
+						
+						if(ultimoMetodo) {
+							bwClasses_data.write("\n\t]\n");
+							bwClasses_data.write("}");
+							bwClasses_data.flush();
+							ultimoMetodo=false;
+						}
+						
 						primoAttributo=true;
 						primaRigaMetodo=true;
 						
