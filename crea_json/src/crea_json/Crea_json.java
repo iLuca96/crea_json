@@ -151,21 +151,13 @@ public class Crea_json {
 									bwClasses_data.write("\t\t\t\t\tname: \""+nomeParametro+"\",\n");
 									bwClasses_data.write("\t\t\t\t\ttype: \""+tipoParametro+"\"\n");
 									bwClasses_data.write("\t\t\t\t},\n");														
-								}
-								
-								
-								//bwClasses_data.write("\t\t\t\t},\n");								
+								}						
 								bwClasses_data.write("\t\t\t]\n");
 								bwClasses_data.flush();
 								break;
 							}
-						}
-						
-						bwClasses_data.write("\t\t}");
-						
-						//bwClasses_data.write("\t\t\t\"parameters\": [\n");
-						//bwClasses_data.write("\t\t\t\t{\n");
-						
+						}						
+						bwClasses_data.write("\t\t}");						
 						bwClasses_data.flush();			
 					
 					} else if((rigaLetta.contains("</text>")) && !(rigaLetta.contains("..") && !(rigaLetta.contains("1.*")))){
@@ -175,6 +167,13 @@ public class Crea_json {
 							bwClasses_data.write("}");
 							bwClasses_data.flush();
 							ultimoMetodo=false;
+						}
+						if(noAttributo&&noMetodo) {
+							bwClasses_data.write("\t],\n");
+							bwClasses_data.write("\t\"methods\": [\n");
+							bwClasses_data.write("\t]\n");
+							bwClasses_data.write("}");
+							bwClasses_data.flush();
 						}
 						
 						primoAttributo=true;
@@ -198,13 +197,7 @@ public class Crea_json {
 						bwClasses_data.write("\t\"isAbstract\": \"false\",\n");
 						bwClasses_data.write("\t\"properties\": [\n");
 						bwClasses_data.flush();
-						if(noAttributo&&noMetodo) {
-							bwClasses_data.write("\t],\n");
-							bwClasses_data.write("\t\"methods\": [\n");
-							bwClasses_data.write("\t]\n");
-							bwClasses_data.write("}");
-							bwClasses_data.flush();
-						}
+						
 						noAttributo=true;
 						noMetodo=true;
 							
