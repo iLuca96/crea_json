@@ -205,6 +205,8 @@ public class Crea_json {
 					}
 				i++;
 			}
+			bwClasses_data.write("\n\t]\n}");
+			bwClasses_data.flush();
 			bwClasses.write("]");
 			bwClasses.flush();
 			System.out.println("numeri di riga processati: "+i);
