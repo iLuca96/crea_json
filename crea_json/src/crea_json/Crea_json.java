@@ -38,6 +38,9 @@ public class Crea_json {
 			boolean primaRigaMetodo = false;
 			boolean primoAttributo = true;
 			
+			boolean noAttributo = false;
+			boolean noMetodo = false;
+			
 			boolean ultimoMetodo = false;
 			String rigaLetta;		
 			
@@ -48,7 +51,8 @@ public class Crea_json {
 				rigaLetta=in.nextLine();				
 								
 				if((rigaLetta.contains("</text>"))&&(rigaLetta.contains("-") &&  ((rigaLetta.contains(":") || (rigaLetta.contains(";")) )))) {
-					//attributo					
+					//attributo
+					noAttributo=false;
 					String nome = "", tipo = "";
 					int k=0;
 					while((rigaLetta.charAt(k)!=':')&&(rigaLetta.charAt(k)!=';')) {
@@ -86,9 +90,10 @@ public class Crea_json {
 					
 				} else if((rigaLetta.contains("</text>"))&&(rigaLetta.contains("+") && rigaLetta.contains("(") && rigaLetta.contains(")") &&  ((rigaLetta.contains(":") || (rigaLetta.contains(";") ))))){
 						//metodo
+						noMetodo=false;
 						primoAttributo=true;
 						ultimoMetodo=true;
-						if(primaRigaMetodo) {							
+						if(primaRigaMetodo||noAttributo) {							
 							bwClasses_data.write("\n\t],\n");
 							bwClasses_data.write("\t\"methods\": [\n");
 							
@@ -124,17 +129,36 @@ public class Crea_json {
 								break;
 							} else {
 								//set
-								bwClasses_data.write("\t\t\t\"parameters\": [\n\t\t\t\t{\n");
-								/*while(rigaLetta.charAt(k)!='<') {
-////////////////////////////////////////////////////////////////////////////////////////////////									
-								}*/
+								bwClasses_data.write("\t\t\t\"visibility\": \"public\",\n");
+								bwClasses_data.write("\t\t\t\"parameters\": [\n");
+								while(rigaLetta.charAt(k)!=')') {
+									bwClasses_data.write("\t\t\t\t{\n");
+									String nomeParametro = "";
+									String tipoParametro = "";
+									while(rigaLetta.charAt(k)!=':') {
+										if(rigaLetta.charAt(k)!='('&&rigaLetta.charAt(k)!=','&&rigaLetta.charAt(k)!=' ') {
+											nomeParametro = nomeParametro+rigaLetta.charAt(k);
+										}										
+										k++;
+									}
+									while(rigaLetta.charAt(k)!=','&&rigaLetta.charAt(k)!=')') {
+										if(rigaLetta.charAt(k)!=':'&&rigaLetta.charAt(k)!=' ') {
+											tipoParametro = tipoParametro+rigaLetta.charAt(k);
+										}
+										k++;
+									}								
+									
+									bwClasses_data.write("\t\t\t\t\tname: \""+nomeParametro+"\",\n");
+									bwClasses_data.write("\t\t\t\t\ttype: \""+tipoParametro+"\"\n");
+									bwClasses_data.write("\t\t\t\t},\n");														
+								}
 								
 								
-								bwClasses_data.write("\t\t\t\t}\n");
+								//bwClasses_data.write("\t\t\t\t},\n");								
 								bwClasses_data.write("\t\t\t]\n");
 								bwClasses_data.flush();
+								break;
 							}
-							k++;
 						}
 						
 						bwClasses_data.write("\t\t}");
@@ -146,7 +170,6 @@ public class Crea_json {
 					
 					} else if((rigaLetta.contains("</text>")) && !(rigaLetta.contains("..") && !(rigaLetta.contains("1.*")))){
 						//nome classe
-						
 						if(ultimoMetodo) {
 							bwClasses_data.write("\n\t]\n");
 							bwClasses_data.write("}");
@@ -175,6 +198,15 @@ public class Crea_json {
 						bwClasses_data.write("\t\"isAbstract\": \"false\",\n");
 						bwClasses_data.write("\t\"properties\": [\n");
 						bwClasses_data.flush();
+						if(noAttributo&&noMetodo) {
+							bwClasses_data.write("\t],\n");
+							bwClasses_data.write("\t\"methods\": [\n");
+							bwClasses_data.write("\t]\n");
+							bwClasses_data.write("}");
+							bwClasses_data.flush();
+						}
+						noAttributo=true;
+						noMetodo=true;
 							
 						x++;
 					}
