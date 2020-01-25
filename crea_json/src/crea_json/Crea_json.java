@@ -148,9 +148,13 @@ public class Crea_json {
 										k++;
 									}								
 									
-									bwClasses_data.write("\t\t\t\t\tname: \""+nomeParametro+"\",\n");
-									bwClasses_data.write("\t\t\t\t\ttype: \""+tipoParametro+"\"\n");
-									bwClasses_data.write("\t\t\t\t},\n");														
+									bwClasses_data.write("\t\t\t\t\t\"name\": \""+nomeParametro+"\",\n");
+									bwClasses_data.write("\t\t\t\t\t\"type\": \""+tipoParametro+"\"\n");
+									if(rigaLetta.charAt(k)==')') {
+										bwClasses_data.write("\t\t\t\t}\n");
+									}else{
+										bwClasses_data.write("\t\t\t\t},\n");
+									}														
 								}						
 								bwClasses_data.write("\t\t\t]\n");
 								bwClasses_data.flush();

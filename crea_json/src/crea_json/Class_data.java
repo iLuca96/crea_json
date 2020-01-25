@@ -12,7 +12,7 @@ public class Class_data {
 	public static void main(String[] args) {
 		String pathLettura = "C:\\Users\\luca\\Desktop\\file prove\\classe_2.txt";
 		String pathClasses = "C:\\Users\\luca\\Desktop\\file prove\\classi_json\\classes.json";
-		String pathClasses_data = "C:\\Users\\luca\\Desktop\\file prove\\classi_json\\prova\\classes_data.json";
+		String pathClasses_data = "C:\\Users\\luca\\Desktop\\file prove\\classi_json\\classes_data.json";
 				
 		try {
 			File fileClasses = new File(pathClasses);
@@ -151,9 +151,13 @@ public class Class_data {
 										k++;
 									}								
 									
-									bwClasses_data_finale.write("\t\t\t\t\tname: \""+nomeParametro+"\",\n");
-									bwClasses_data_finale.write("\t\t\t\t\ttype: \""+tipoParametro+"\"\n");
-									bwClasses_data_finale.write("\t\t\t\t},\n");														
+									bwClasses_data_finale.write("\t\t\t\t\t\"name\": \""+nomeParametro+"\",\n");
+									bwClasses_data_finale.write("\t\t\t\t\t\"type\": \""+tipoParametro+"\"\n");
+									if(rigaLetta.charAt(k)==')') {
+										bwClasses_data_finale.write("\t\t\t\t}\n");
+									}else{
+										bwClasses_data_finale.write("\t\t\t\t},\n");
+									}													
 								}						
 								bwClasses_data_finale.write("\t\t\t]\n");
 								bwClasses_data_finale.flush();
